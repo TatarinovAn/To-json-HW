@@ -43,9 +43,7 @@ public class Main {
         strategy.setType(Employee.class);
         strategy.setColumnMapping("id", "firstName", "lastName", "country", "age");
 
-        CsvToBean<Employee> csv = new CsvToBeanBuilder<Employee>(csvReader)
-                .withMappingStrategy(strategy)
-                .build();
+        CsvToBean<Employee> csv = new CsvToBeanBuilder<Employee>(csvReader).withMappingStrategy(strategy).build();
 
         staff = csv.parse();
         return staff;
@@ -70,27 +68,27 @@ public class Main {
         }
     }
 
-    public static List<Employee> parseXML(String fileName) throws ParserConfigurationException,
-            IOException, SAXException {
+    public static List<Employee> parseXML(String fileName) throws ParserConfigurationException, IOException, SAXException {
         List<Employee> list = new ArrayList<>();
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
 
         Document doc = builder.parse(new File(fileName));
-        Element element = doc.getDocumentElement();
+        Node root = doc.getDocumentElement();
 
-        NodeList nodeList = element.getChildNodes();
+        NodeList nodeList = root.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
-                NodeList nodeListChild = nodeList.item(i).getChildNodes();
-                String[] arrayV = new String[nodeListChild.getLength()];
+                Element employee = (Element) node;
 
-                long id = Long.parseLong(nodeListChild.item(1).getTextContent());
-                String firstName = nodeListChild.item(3).getTextContent();
-                String lastName = nodeListChild.item(5).getTextContent();
-                String country = nodeListChild.item(7).getTextContent();
-                int age = Integer.parseInt(nodeListChild.item(9).getTextContent());
+                long id = Integer.parseInt(employee.getElementsByTagName("id").item(0).getTextContent());
+                String firstName = employee.getElementsByTagName("firstName").item(0).getTextContent();
+                String lastName = employee.getElementsByTagName("lastName").item(0).getTextContent();
+                String country = employee.getElementsByTagName("country").item(0).getTextContent();
+                int age = Integer.parseInt(employee.getElementsByTagName("age").item(0).getTextContent());
+
+
                 list.add(new Employee(id, firstName, lastName, country, age));
             }
         }
